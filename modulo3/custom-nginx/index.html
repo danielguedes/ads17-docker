@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Hello World</title>
+    <style>
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap');
+        
+        :root {
+            --docker-blue: #099CEC;
+            --docker-dark-blue: #0B77A8;
+            --docker-darker: #1D63ED;
+            --container-color-1: #2496ED;
+            --container-color-2: #0DB7ED;
+            --container-color-3: #384D54;
+            --container-color-4: #2497F4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--docker-blue), var(--docker-dark-blue), var(--docker-darker));
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: white;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            position: relative;
+            text-align: center;
+            padding: 3rem;
+            background: rgba(56, 77, 84, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: perspective(500px) rotateX(5deg);
+            transition: all 0.5s ease;
+            max-width: 90%;
+            width: 600px;
+            z-index: 10;
+        }
+        
+        .container:hover {
+            transform: perspective(500px) rotateX(0);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .docker-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+        }
+        
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tagline {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: monospace;
+            text-align: left;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .code-block::before {
+            content: "$ ";
+            color: #0DB7ED;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--docker-blue);
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background: var(--docker-dark-blue);
+        }
+        
+        .footer-links {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 10px;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .footer-links a:hover {
+            color: var(--docker-blue);
+            transform: translateY(-2px);
+        }
+        
+        .footer-links a i {
+            margin-right: 5px;
+        }
+        
+        /* Container animations */
+        .docker-containers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .docker-container {
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            border-radius: 4px;
+            animation: float 12s infinite linear;
+            opacity: 0.7;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0); }
+            100% { transform: translateY(-100px) translateX(calc(100vw - 100px)); }
+        }
+    </style>
+</head>
+<body>
+    <div class="docker-containers" id="docker-containers"></div>
+    
+    <div class="container">
+        <svg class="docker-logo" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#0099e5" d="M250,459.3A207.5,207.5,0,0,1,70.7,344.4C34.7,277.5,38.3,193.4,79.4,129.1c8.2-12.8,17.8-24.8,29.1-35.8C147.9,56.5,199.1,40,250,42.7c105.1,5.5,194.3,89.3,207.7,194C471.1,349.6,385.2,459.3,250,459.3Zm0,0"/>
+            <path fill="#ffffff" d="M255.1,137.6h38.7v38.7H255.1Zm-48.4,0h38.7v38.7H206.7Zm-48.4,0H197v38.7H158.3Zm-48.4,0h38.7v38.7H109.9Zm48.4-48.4H197v38.7H158.3Zm48.4,0h38.7v38.7H206.7Zm48.3,0h38.7v38.7H255Zm-96.7-48.3H197V79.6H158.3Zm48.4,0h38.7V79.6H206.7Zm96.7,145.1h38.7v38.7H303.4Zm-241.8,0h38.7v38.7H61.6Zm48.3,0h38.7v38.7H109.9Zm48.4,0H197v38.7H158.3Zm48.4,0h38.7v38.7H206.7Zm48.3,0h38.7v38.7H255Zm96.7-48.4h38.7v38.7H351.7Zm48.3,0h38.7v38.7H400Z"/>
+            <path fill="none" d="M0,0H512V512H0Z"/>
+        </svg>
+        <h1>Hello, Docker World!</h1>
+        <div class="tagline">Build, Ship, and Run Anywhere</div>
+        <p>Experience the power of containerization. Package your applications with all their dependencies into a standardized unit for seamless deployment.</p>
+        
+        <div class="code-block">docker run -it --rm -p 80:80 -v $(pwd)/index.html:/usr/share/nginx/html/index.html nginx:latest</div>
+        
+        <a href="#" class="btn"><i class="fab fa-docker"></i> Get Started</a>
+        <a href="#" class="btn"><i class="fas fa-book"></i> Documentation</a>
+        
+        <div class="footer-links">
+            <a href="#"><i class="fab fa-github"></i> GitHub</a>
+            <a href="#"><i class="fab fa-slack"></i> Community</a>
+            <a href="#"><i class="fas fa-cloud"></i> Docker Hub</a>
+            <a href="#"><i class="fas fa-terminal"></i> CLI Reference</a>
+        </div>
+    </div>
+
+    <script>
+        // Create floating Docker containers
+        const containersDiv = document.getElementById('docker-containers');
+        const containerCount = 15;
+        const containerColors = [
+            'var(--container-color-1)',
+            'var(--container-color-2)',
+            'var(--container-color-3)',
+            'var(--container-color-4)'
+        ];
+        
+        for (let i = 0; i < containerCount; i++) {
+            createContainer();
+        }
+        
+        function createContainer() {
+            const container = document.createElement('div');
+            container.classList.add('docker-container');
+            
+            // Random color
+            const colorIndex = Math.floor(Math.random() * containerColors.length);
+            container.style.backgroundColor = containerColors[colorIndex];
+            
+            // Random size
+            const size = Math.random() * 30 + 40;
+            container.style.width = `${size}px`;
+            container.style.height = `${size * 0.7}px`;
+            
+            // Random position
+            const posX = Math.random() * 100;
+            container.style.left = `${posX}%`;
+            
+            // Random animation duration
+            const animDuration = Math.random() * 15 + 20;
+            container.style.animationDuration = `${animDuration}s`;
+            
+            // Random delay
+            const delay = Math.random() * 15;
+            container.style.animationDelay = `${delay}s`;
+            
+            containersDiv.appendChild(container);
+            
+            // Remove and recreate container after animation
+            setTimeout(() => {
+                container.remove();
+                createContainer();
+            }, animDuration * 1000 + delay * 1000);
+        }
+    </script>
+</body>
+</html>
